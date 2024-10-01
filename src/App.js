@@ -1,10 +1,16 @@
 import * as React from "react";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import Checkbox from "@mui/material/Checkbox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function CustomPaper({ children, buttons, ...other }) {
   return (
@@ -16,7 +22,7 @@ function CustomPaper({ children, buttons, ...other }) {
 }
 
 export default function App() {
-  const options = ["one", "two", "three", "four"];
+  const schools = ["School A", "School B", "School C", "School D"];
   const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
   console.log(value);
@@ -115,7 +121,7 @@ export default function App() {
             //   minWidth: isBlurred ? 0 : "auto",
             //   transition: "min-width 0.2s", // smooth transition
             // }}
-            options={options}
+            options={schools}
             renderInput={(params) => {
               console.log(params); // Logs the params object
               console.log(params.value); // Logs the params object
@@ -142,6 +148,20 @@ export default function App() {
                 <Typography variant="body2" style={{ width: "100%" }}>
                   {`${numTags} Schools Selected`}
                 </Typography>
+              );
+            }}
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </li>
               );
             }}
             ListboxProps={{ sx: { maxHeight: 100 } }}
