@@ -1,6 +1,7 @@
 import * as React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -17,7 +18,10 @@ function CustomPaper({ children, buttons, ...other }) {
 export default function App() {
   const options = ["one", "two", "three", "four"];
   const buttonRef = React.useRef();
-
+  const [value, setValue] = React.useState([]);
+  console.log(value);
+  const [isBlurred, setIsBlurred] = React.useState(true);
+  console.log("# isBlurred", isBlurred);
   const [open, setOpen] = React.useState(false);
 
   const handleClickAway = () => {
@@ -104,17 +108,41 @@ export default function App() {
             }}
             open={open}
             disablePortal
+            onChange={(event, value) => setValue(value)}
+            onBlur={() => setIsBlurred(true)}
+            onFocus={() => setIsBlurred(false)}
+            // sx={{
+            //   minWidth: isBlurred ? 0 : "auto",
+            //   transition: "min-width 0.2s", // smooth transition
+            // }}
             options={options}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                // work around for safari, but safari is borked
-                // inputProps={{
-                //   ...params.inputProps,
-                //   onBlur: undefined,
-                // }}
-              />
-            )}
+            renderInput={(params) => {
+              console.log(params); // Logs the params object
+              console.log(params.value); // Logs the params object
+
+              return (
+                <TextField
+                  {...params}
+                  placeholder="Start typing to find a School"
+                  inputProps={{
+                    style: {
+                      width: isBlurred && value.length ? 0 : "auto",
+                      height: isBlurred && value.length ? 0 : "auto",
+                      padding: isBlurred && value.length ? 0 : "auto",
+                    },
+                    ...params.inputProps,
+                  }}
+                />
+              );
+            }}
+            renderTags={(value, getTagProps) => {
+              const numTags = value.length;
+              return (
+                <Typography variant="body2" style={{ width: "100%" }}>
+                  {`${numTags} Schools Selected`}
+                </Typography>
+              );
+            }}
             ListboxProps={{ sx: { maxHeight: 100 } }}
             PaperComponent={CustomPaper}
             componentsProps={{ paper: { buttons: buttons } }}
