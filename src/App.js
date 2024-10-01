@@ -15,6 +15,9 @@ function CustomPaper({ children, buttons, ...other }) {
 }
 
 export default function App() {
+  const options = ["one", "two", "three", "four"];
+  const buttonRef = React.useRef();
+
   const [open, setOpen] = React.useState(false);
 
   const handleClickAway = () => {
@@ -30,21 +33,47 @@ export default function App() {
       <Chip
         label="Accept"
         sx={{ margin: 1 }}
+        onKeyDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+          // event.preventDefault();
+          console.log(event);
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+          }
+        }}
         onMouseDown={(event) => {
           // Prevent input blur which triggers closing the Popper
           event.preventDefault();
         }}
         onClick={() => {
           console.log("Accept clicked");
+          // buttonRef?.current?.focus();
           handleClickAway();
         }}
       />
       <Chip
         label="Cancel"
         sx={{ margin: 1 }}
+        onKeyDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+          // event.preventDefault();
+          console.log(event);
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+            // buttonRef?.current?.focus();
+          }
+        }}
         onMouseDown={(event) => {
           // Prevent input blur which triggers closing the Popper
-          event.preventDefault();
+          // event.preventDefault();
+          console.log(event);
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+            // buttonRef?.current?.focus();
+          }
         }}
         onClick={() => console.log("Cancel clicked")}
       />
@@ -64,9 +93,7 @@ export default function App() {
         <Paper sx={{ padding: 1 }}>
           <Autocomplete
             freeSolo
-            onFocus={(event) => {
-              handleClickIn();
-            }}
+            multiple
             onClose={(event, reason) => {
               if (reason === "escape") {
                 handleClickAway();
@@ -77,15 +104,27 @@ export default function App() {
             }}
             open={open}
             disablePortal
-            options={["one", "two", "three", "four"]}
-            renderInput={(params) => <TextField {...params} />}
+            options={options}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                inputProps={{
+                  ...params.inputProps,
+                  onBlur: undefined,
+                }}
+              />
+            )}
             ListboxProps={{ sx: { maxHeight: 100 } }}
             PaperComponent={CustomPaper}
             componentsProps={{ paper: { buttons: buttons } }}
           />
         </Paper>
       </div>
-      <Chip label="tab to me 2" onClick={() => console.log("tab clicked")} />
+      <Chip
+        label="tab to me 2"
+        onClick={() => console.log("tab clicked")}
+        ref={buttonRef}
+      />
     </>
   );
 }
