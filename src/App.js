@@ -108,10 +108,11 @@ export default function App() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                inputProps={{
-                  ...params.inputProps,
-                  onBlur: undefined,
-                }}
+                // work around for safari, but safari is borked
+                // inputProps={{
+                //   ...params.inputProps,
+                //   onBlur: undefined,
+                // }}
               />
             )}
             ListboxProps={{ sx: { maxHeight: 100 } }}
