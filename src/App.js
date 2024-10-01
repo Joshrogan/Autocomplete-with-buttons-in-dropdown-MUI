@@ -127,6 +127,7 @@ export default function App() {
                   inputProps={{
                     style: {
                       width: isBlurred && value.length ? 0 : "auto",
+                      minWidth: isBlurred && value.length ? 0 : "auto",
                       height: isBlurred && value.length ? 0 : "auto",
                       padding: isBlurred && value.length ? 0 : "auto",
                     },
