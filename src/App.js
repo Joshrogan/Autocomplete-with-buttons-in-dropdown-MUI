@@ -20,9 +20,16 @@ function CustomPaper({ children, buttons, ...other }) {
     </Paper>
   );
 }
+const schools = [
+  { title: "School A", key: "School A" },
+  { title: "School B", key: "School B" },
+  { title: "School C", key: "School C" },
+  { title: "School D", key: "School D" },
+];
 
 export default function App() {
-  const schools = ["School A", "School B", "School C", "School D"];
+  // const schools = ["School A", "School B", "School C", "School D"];
+
   const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
   console.log(value);
@@ -112,9 +119,22 @@ export default function App() {
             onOpen={(event) => {
               handleClickIn();
             }}
+            value={value}
+            filterOptions={(options, params) => {
+              // <<<--- inject the Select All option
+              const filter = createFilterOptions();
+              const filtered = filter(options, params);
+              return [{ title: "Select All...", all: true }, ...filtered];
+            }}
+            onChange={(event, newValue) => {
+              if (newValue.find((option) => option.all))
+                return setValue(value.length === schools.length ? [] : schools);
+
+              setValue(newValue);
+            }}
             open={open}
             disablePortal
-            onChange={(event, value) => setValue(value)}
+            // onChange={(event, value) => setValue(value)}
             onBlur={() => setIsBlurred(true)}
             onFocus={() => setIsBlurred(false)}
             // sx={{
@@ -150,20 +170,21 @@ export default function App() {
                 </Typography>
               );
             }}
-            renderOption={(props, option, { selected }) => {
-              const { key, ...optionProps } = props;
-              return (
-                <li key={key} {...optionProps}>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </li>
-              );
-            }}
+            getOptionLabel={(option) => option.title}
+            renderOption={(props, option, { selected }) => (
+              <li {...props} key={option.key}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  // checked={selected} <<<--- OLD
+                  checked={
+                    option.all ? !!(value.length === schools.length) : selected
+                  }
+                />
+                {option.title}
+              </li>
+            )}
             ListboxProps={{ sx: { maxHeight: 100 } }}
             PaperComponent={CustomPaper}
             componentsProps={{ paper: { buttons: buttons } }}
