@@ -8,6 +8,7 @@ import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import Divider from "@mui/material/Divider";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -16,6 +17,7 @@ function CustomPaper({ children, buttons, ...other }) {
   return (
     <Paper {...other}>
       {children}
+      <Divider />
       {buttons}
     </Paper>
   );
@@ -48,6 +50,7 @@ export default function App() {
 
   const buttons = (
     <Box sx={{ display: "flex", direction: "row" }}>
+      <Divider />
       <Chip
         label="Accept"
         sx={{ margin: 1 }}
@@ -110,7 +113,6 @@ export default function App() {
       >
         <Paper sx={{ padding: 1 }}>
           <Autocomplete
-            freeSolo
             multiple
             onClose={(event, reason) => {
               if (reason === "escape") {
@@ -175,21 +177,26 @@ export default function App() {
             }}
             getOptionLabel={(option) => option.title}
             renderOption={(props, option, { selected }) => (
-              <li {...props} key={option.key}>
-                <Checkbox
-                  icon={icon}
-                  tabIndex={-1}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  // checked={selected} <<<--- OLD
-                  checked={
-                    option.all ? !!(value.length === schools.length) : selected
-                  }
-                />
-                {option.title}
-              </li>
+              <>
+                <li {...props} key={option.key}>
+                  <Checkbox
+                    icon={icon}
+                    tabIndex={-1}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    // checked={selected} <<<--- OLD
+                    checked={
+                      option.all
+                        ? !!(value.length === schools.length)
+                        : selected
+                    }
+                  />
+                  {option.title}
+                </li>
+                {option.all ? <Divider /> : null}
+              </>
             )}
-            ListboxProps={{ sx: { maxHeight: 100 } }}
+            ListboxProps={{ sx: { maxHeight: 300 } }}
             PaperComponent={CustomPaper}
             componentsProps={{ paper: { buttons: buttons } }}
           />
