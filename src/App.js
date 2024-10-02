@@ -47,7 +47,6 @@ const schools = generateRandomSchools(100);
 console.log(schools);
 
 export default function App() {
-  const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
   const [isBlurred, setIsBlurred] = React.useState(true);
   const [open, setOpen] = React.useState(false);
@@ -219,7 +218,6 @@ export default function App() {
       <Chip
         label="dummy tab focus 2"
         onClick={() => console.log("tab clicked")}
-        ref={buttonRef}
       />
     </>
   );
