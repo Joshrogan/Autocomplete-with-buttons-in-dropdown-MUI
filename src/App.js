@@ -186,30 +186,33 @@ export default function App() {
               );
             }}
             getOptionLabel={(option) => option.title}
-            renderOption={(props, option, { selected }) => (
-              <React.Fragment key={option.key}>
-                <li {...props}>
-                  <Checkbox
-                    icon={icon}
-                    tabIndex={-1}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={
-                      option.all
-                        ? !!(value.length === schools.length)
-                        : selected
-                    }
-                    indeterminate={
-                      option.all
-                        ? !!(value.length && value.length !== schools.length)
-                        : undefined
-                    }
-                  />
-                  {option.title}
-                </li>
-                {option.all ? <Divider /> : null}
-              </React.Fragment>
-            )}
+            renderOption={(props, option, { selected }) => {
+              const { key, ...restProps } = props;
+              return (
+                <React.Fragment key={option.key}>
+                  <li {...restProps}>
+                    <Checkbox
+                      icon={icon}
+                      tabIndex={-1}
+                      checkedIcon={checkedIcon}
+                      style={{ marginRight: 8 }}
+                      checked={
+                        option.all
+                          ? !!(value.length === schools.length)
+                          : selected
+                      }
+                      indeterminate={
+                        option.all
+                          ? !!(value.length && value.length !== schools.length)
+                          : undefined
+                      }
+                    />
+                    {option.title}
+                  </li>
+                  {option.all ? <Divider /> : null}
+                </React.Fragment>
+              );
+            }}
             PaperComponent={CustomPaper}
             slotProps={{ paper: { buttons: buttons } }}
           />
