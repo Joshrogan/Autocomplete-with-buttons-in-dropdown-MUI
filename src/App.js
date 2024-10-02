@@ -47,7 +47,6 @@ const schools = generateRandomSchools(100);
 console.log(schools);
 
 export default function App() {
-  const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
   const [isBlurred, setIsBlurred] = React.useState(true);
   const [open, setOpen] = React.useState(false);
@@ -55,6 +54,7 @@ export default function App() {
 
   const handleClickAway = () => {
     setOpen(false);
+    setInputValue("");
   };
 
   const handleClickIn = () => {
@@ -85,6 +85,7 @@ export default function App() {
         }}
         onClick={() => {
           setValue([]);
+          setInputValue("");
           console.log("Clear Selection Clicked");
         }}
       />
@@ -155,6 +156,7 @@ export default function App() {
             }}
             open={open}
             disablePortal
+            disableClearable
             onBlur={() => setIsBlurred(true)}
             onFocus={() => setIsBlurred(false)}
             options={schools}
@@ -187,30 +189,33 @@ export default function App() {
               );
             }}
             getOptionLabel={(option) => option.title}
-            renderOption={(props, option, { selected }) => (
-              <React.Fragment key={option.key}>
-                <li {...props}>
-                  <Checkbox
-                    icon={icon}
-                    tabIndex={-1}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={
-                      option.all
-                        ? !!(value.length === schools.length)
-                        : selected
-                    }
-                    indeterminate={
-                      option.all
-                        ? !!(value.length && value.length !== schools.length)
-                        : undefined
-                    }
-                  />
-                  {option.title}
-                </li>
-                {option.all ? <Divider /> : null}
-              </React.Fragment>
-            )}
+            renderOption={(props, option, { selected }) => {
+              const { key, ...restProps } = props;
+              return (
+                <React.Fragment key={option.key}>
+                  <li {...restProps}>
+                    <Checkbox
+                      icon={icon}
+                      tabIndex={-1}
+                      checkedIcon={checkedIcon}
+                      style={{ marginRight: 8 }}
+                      checked={
+                        option.all
+                          ? !!(value.length === schools.length)
+                          : selected
+                      }
+                      indeterminate={
+                        option.all
+                          ? !!(value.length && value.length !== schools.length)
+                          : undefined
+                      }
+                    />
+                    {option.title}
+                  </li>
+                  {option.all ? <Divider /> : null}
+                </React.Fragment>
+              );
+            }}
             PaperComponent={CustomPaper}
             slotProps={{ paper: { buttons: buttons } }}
           />
@@ -219,7 +224,6 @@ export default function App() {
       <Chip
         label="dummy tab focus 2"
         onClick={() => console.log("tab clicked")}
-        ref={buttonRef}
       />
     </>
   );
