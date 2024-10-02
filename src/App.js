@@ -155,6 +155,7 @@ export default function App() {
             }}
             open={open}
             disablePortal
+            disableClearable
             onBlur={() => setIsBlurred(true)}
             onFocus={() => setIsBlurred(false)}
             options={schools}
