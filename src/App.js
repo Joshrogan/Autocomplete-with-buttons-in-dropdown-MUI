@@ -22,16 +22,31 @@ function CustomPaper({ children, buttons, ...other }) {
     </Paper>
   );
 }
-const schools = [
-  { title: "School A", key: "School A" },
-  { title: "School B", key: "School B" },
-  { title: "School C", key: "School C" },
-  { title: "School D", key: "School D" },
-];
+
+function generateRandomSchools(count) {
+  console.log("## generated");
+  const schools = [];
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (let i = 0; i < count; i++) {
+    const randomLetters = Array.from(
+      { length: Math.floor(Math.random() * 15) + 5 },
+      () => alphabet.charAt(Math.floor(Math.random() * alphabet.length))
+    ).join("");
+
+    const title = `School ${randomLetters}`;
+    const key = title;
+
+    schools.push({ title, key });
+  }
+
+  return schools;
+}
+
+const schools = generateRandomSchools(100);
+console.log(schools);
 
 export default function App() {
-  // const schools = ["School A", "School B", "School C", "School D"];
-
   const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
   const [isBlurred, setIsBlurred] = React.useState(true);
@@ -127,7 +142,10 @@ export default function App() {
               // <<<--- inject the Select All option
               const filter = createFilterOptions();
               const filtered = filter(options, params);
-              return [{ title: "Select All...", all: true }, ...filtered];
+              return [
+                { title: "Select All...", all: true, key: "all" },
+                ...filtered,
+              ];
             }}
             onChange={(event, newValue) => {
               if (newValue.find((option) => option.all))
@@ -146,14 +164,16 @@ export default function App() {
                   {...params}
                   placeholder="Start typing to find a School"
                   onChange={(e) => setInputValue(e.target.value)}
-                  inputProps={{
-                    style: {
-                      width: isBlurred && value.length ? 0 : "auto",
-                      minWidth: isBlurred && value.length ? 0 : "auto",
-                      height: isBlurred && value.length ? 0 : "auto",
-                      padding: isBlurred && value.length ? 0 : "auto",
+                  slotProps={{
+                    htmlInput: {
+                      style: {
+                        width: isBlurred && value.length ? 0 : "auto",
+                        minWidth: isBlurred && value.length ? 0 : "auto",
+                        height: isBlurred && value.length ? 0 : "auto",
+                        padding: isBlurred && value.length ? 0 : "auto",
+                      },
+                      ...params.inputProps,
                     },
-                    ...params.inputProps,
                   }}
                 />
               );
@@ -168,8 +188,8 @@ export default function App() {
             }}
             getOptionLabel={(option) => option.title}
             renderOption={(props, option, { selected }) => (
-              <>
-                <li {...props} key={option.key}>
+              <React.Fragment key={option.key}>
+                <li {...props}>
                   <Checkbox
                     icon={icon}
                     tabIndex={-1}
@@ -189,9 +209,8 @@ export default function App() {
                   {option.title}
                 </li>
                 {option.all ? <Divider /> : null}
-              </>
+              </React.Fragment>
             )}
-            ListboxProps={{ sx: { maxHeight: 300 } }}
             PaperComponent={CustomPaper}
             slotProps={{ paper: { buttons: buttons } }}
           />
