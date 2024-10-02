@@ -36,6 +36,7 @@ export default function App() {
   const [isBlurred, setIsBlurred] = React.useState(true);
   console.log("# isBlurred", isBlurred);
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
 
   const handleClickAway = () => {
     setOpen(false);
@@ -120,6 +121,7 @@ export default function App() {
               handleClickIn();
             }}
             value={value}
+            inputValue={inputValue}
             filterOptions={(options, params) => {
               // <<<--- inject the Select All option
               const filter = createFilterOptions();
@@ -150,6 +152,7 @@ export default function App() {
                 <TextField
                   {...params}
                   placeholder="Start typing to find a School"
+                  onChange={(e) => setInputValue(e.target.value)}
                   inputProps={{
                     style: {
                       width: isBlurred && value.length ? 0 : "auto",
