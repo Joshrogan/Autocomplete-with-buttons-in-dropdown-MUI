@@ -8,6 +8,7 @@ import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import Divider from "@mui/material/Divider";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -16,26 +17,41 @@ function CustomPaper({ children, buttons, ...other }) {
   return (
     <Paper {...other}>
       {children}
+      <Divider />
       {buttons}
     </Paper>
   );
 }
-const schools = [
-  { title: "School A", key: "School A" },
-  { title: "School B", key: "School B" },
-  { title: "School C", key: "School C" },
-  { title: "School D", key: "School D" },
-];
+
+function generateRandomSchools(count) {
+  console.log("## generated");
+  const schools = [];
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (let i = 0; i < count; i++) {
+    const randomLetters = Array.from(
+      { length: Math.floor(Math.random() * 15) + 5 },
+      () => alphabet.charAt(Math.floor(Math.random() * alphabet.length))
+    ).join("");
+
+    const title = `School ${randomLetters}`;
+    const key = title;
+
+    schools.push({ title, key });
+  }
+
+  return schools;
+}
+
+const schools = generateRandomSchools(100);
+console.log(schools);
 
 export default function App() {
-  // const schools = ["School A", "School B", "School C", "School D"];
-
   const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
-  console.log(value);
   const [isBlurred, setIsBlurred] = React.useState(true);
-  console.log("# isBlurred", isBlurred);
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
 
   const handleClickAway = () => {
     setOpen(false);
@@ -47,13 +63,38 @@ export default function App() {
 
   const buttons = (
     <Box sx={{ display: "flex", direction: "row" }}>
+      <Divider />
       <Chip
-        label="Accept"
+        label="Clear Selection"
+        sx={{ margin: 1 }}
+        onKeyDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+          }
+        }}
+        onMouseDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+          }
+        }}
+        onClick={() => {
+          setValue([]);
+          console.log("Clear Selection Clicked");
+        }}
+      />
+      <Chip
+        label="Apply"
         sx={{ margin: 1 }}
         onKeyDown={(event) => {
           // Prevent input blur which triggers closing the Popper
           // event.preventDefault();
-          console.log(event);
+
           const EVENT_TYPES = ["Escape", "Esc"];
           if (EVENT_TYPES.includes(event.key)) {
             handleClickAway();
@@ -64,41 +105,18 @@ export default function App() {
           event.preventDefault();
         }}
         onClick={() => {
-          console.log("Accept clicked");
-          // buttonRef?.current?.focus();
+          console.log("Apply clicked");
           handleClickAway();
         }}
-      />
-      <Chip
-        label="Cancel"
-        sx={{ margin: 1 }}
-        onKeyDown={(event) => {
-          // Prevent input blur which triggers closing the Popper
-          // event.preventDefault();
-          console.log(event);
-          const EVENT_TYPES = ["Escape", "Esc"];
-          if (EVENT_TYPES.includes(event.key)) {
-            handleClickAway();
-            // buttonRef?.current?.focus();
-          }
-        }}
-        onMouseDown={(event) => {
-          // Prevent input blur which triggers closing the Popper
-          // event.preventDefault();
-          console.log(event);
-          const EVENT_TYPES = ["Escape", "Esc"];
-          if (EVENT_TYPES.includes(event.key)) {
-            handleClickAway();
-            // buttonRef?.current?.focus();
-          }
-        }}
-        onClick={() => console.log("Cancel clicked")}
       />
     </Box>
   );
   return (
     <>
-      <Chip label="tab to me 1" onClick={() => console.log("tab clicked")} />
+      <Chip
+        label="dummy tab focus 1"
+        onClick={() => console.log("tab clicked")}
+      />
       <div
         className="App"
         onBlur={(event) => {
@@ -109,7 +127,6 @@ export default function App() {
       >
         <Paper sx={{ padding: 1 }}>
           <Autocomplete
-            freeSolo
             multiple
             onClose={(event, reason) => {
               if (reason === "escape") {
@@ -120,11 +137,15 @@ export default function App() {
               handleClickIn();
             }}
             value={value}
+            inputValue={inputValue}
             filterOptions={(options, params) => {
               // <<<--- inject the Select All option
               const filter = createFilterOptions();
               const filtered = filter(options, params);
-              return [{ title: "Select All...", all: true }, ...filtered];
+              return [
+                { title: "Select All...", all: true, key: "all" },
+                ...filtered,
+              ];
             }}
             onChange={(event, newValue) => {
               if (newValue.find((option) => option.all))
@@ -134,30 +155,25 @@ export default function App() {
             }}
             open={open}
             disablePortal
-            // onChange={(event, value) => setValue(value)}
             onBlur={() => setIsBlurred(true)}
             onFocus={() => setIsBlurred(false)}
-            // sx={{
-            //   minWidth: isBlurred ? 0 : "auto",
-            //   transition: "min-width 0.2s", // smooth transition
-            // }}
             options={schools}
             renderInput={(params) => {
-              console.log(params); // Logs the params object
-              console.log(params.value); // Logs the params object
-
               return (
                 <TextField
                   {...params}
                   placeholder="Start typing to find a School"
-                  inputProps={{
-                    style: {
-                      width: isBlurred && value.length ? 0 : "auto",
-                      minWidth: isBlurred && value.length ? 0 : "auto",
-                      height: isBlurred && value.length ? 0 : "auto",
-                      padding: isBlurred && value.length ? 0 : "auto",
+                  onChange={(e) => setInputValue(e.target.value)}
+                  slotProps={{
+                    htmlInput: {
+                      style: {
+                        width: isBlurred && value.length ? 0 : "auto",
+                        minWidth: isBlurred && value.length ? 0 : "auto",
+                        height: isBlurred && value.length ? 0 : "auto",
+                        padding: isBlurred && value.length ? 0 : "auto",
+                      },
+                      ...params.inputProps,
                     },
-                    ...params.inputProps,
                   }}
                 />
               );
@@ -172,28 +188,36 @@ export default function App() {
             }}
             getOptionLabel={(option) => option.title}
             renderOption={(props, option, { selected }) => (
-              <li {...props} key={option.key}>
-                <Checkbox
-                  icon={icon}
-                  tabIndex={-1}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  // checked={selected} <<<--- OLD
-                  checked={
-                    option.all ? !!(value.length === schools.length) : selected
-                  }
-                />
-                {option.title}
-              </li>
+              <React.Fragment key={option.key}>
+                <li {...props}>
+                  <Checkbox
+                    icon={icon}
+                    tabIndex={-1}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={
+                      option.all
+                        ? !!(value.length === schools.length)
+                        : selected
+                    }
+                    indeterminate={
+                      option.all
+                        ? !!(value.length && value.length !== schools.length)
+                        : undefined
+                    }
+                  />
+                  {option.title}
+                </li>
+                {option.all ? <Divider /> : null}
+              </React.Fragment>
             )}
-            ListboxProps={{ sx: { maxHeight: 100 } }}
             PaperComponent={CustomPaper}
-            componentsProps={{ paper: { buttons: buttons } }}
+            slotProps={{ paper: { buttons: buttons } }}
           />
         </Paper>
       </div>
       <Chip
-        label="tab to me 2"
+        label="dummy tab focus 2"
         onClick={() => console.log("tab clicked")}
         ref={buttonRef}
       />
