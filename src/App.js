@@ -96,7 +96,10 @@ export default function App() {
             // buttonRef?.current?.focus();
           }
         }}
-        onClick={() => console.log("Cancel clicked")}
+        onClick={() => {
+          setValue([]);
+          console.log("Cancel clicked");
+        }}
       />
     </Box>
   );
@@ -189,6 +192,11 @@ export default function App() {
                       option.all
                         ? !!(value.length === schools.length)
                         : selected
+                    }
+                    indeterminate={
+                      option.all
+                        ? !!(value.length && value.length !== schools.length)
+                        : undefined
                     }
                   />
                   {option.title}
