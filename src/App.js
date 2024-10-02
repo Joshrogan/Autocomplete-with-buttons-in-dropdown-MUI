@@ -54,6 +54,7 @@ export default function App() {
 
   const handleClickAway = () => {
     setOpen(false);
+    setInputValue("");
   };
 
   const handleClickIn = () => {
