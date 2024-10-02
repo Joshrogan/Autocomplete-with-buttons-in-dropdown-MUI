@@ -34,9 +34,7 @@ export default function App() {
 
   const buttonRef = React.useRef();
   const [value, setValue] = React.useState([]);
-  console.log(value);
   const [isBlurred, setIsBlurred] = React.useState(true);
-  console.log("# isBlurred", isBlurred);
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
 
@@ -52,12 +50,36 @@ export default function App() {
     <Box sx={{ display: "flex", direction: "row" }}>
       <Divider />
       <Chip
-        label="Accept"
+        label="Clear Selection"
+        sx={{ margin: 1 }}
+        onKeyDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+          }
+        }}
+        onMouseDown={(event) => {
+          // Prevent input blur which triggers closing the Popper
+
+          const EVENT_TYPES = ["Escape", "Esc"];
+          if (EVENT_TYPES.includes(event.key)) {
+            handleClickAway();
+          }
+        }}
+        onClick={() => {
+          setValue([]);
+          console.log("Clear Selection Clicked");
+        }}
+      />
+      <Chip
+        label="Apply"
         sx={{ margin: 1 }}
         onKeyDown={(event) => {
           // Prevent input blur which triggers closing the Popper
           // event.preventDefault();
-          console.log(event);
+
           const EVENT_TYPES = ["Escape", "Esc"];
           if (EVENT_TYPES.includes(event.key)) {
             handleClickAway();
@@ -68,44 +90,18 @@ export default function App() {
           event.preventDefault();
         }}
         onClick={() => {
-          console.log("Accept clicked");
-          // buttonRef?.current?.focus();
+          console.log("Apply clicked");
           handleClickAway();
-        }}
-      />
-      <Chip
-        label="Cancel"
-        sx={{ margin: 1 }}
-        onKeyDown={(event) => {
-          // Prevent input blur which triggers closing the Popper
-          // event.preventDefault();
-          console.log(event);
-          const EVENT_TYPES = ["Escape", "Esc"];
-          if (EVENT_TYPES.includes(event.key)) {
-            handleClickAway();
-            // buttonRef?.current?.focus();
-          }
-        }}
-        onMouseDown={(event) => {
-          // Prevent input blur which triggers closing the Popper
-          // event.preventDefault();
-          console.log(event);
-          const EVENT_TYPES = ["Escape", "Esc"];
-          if (EVENT_TYPES.includes(event.key)) {
-            handleClickAway();
-            // buttonRef?.current?.focus();
-          }
-        }}
-        onClick={() => {
-          setValue([]);
-          console.log("Cancel clicked");
         }}
       />
     </Box>
   );
   return (
     <>
-      <Chip label="tab to me 1" onClick={() => console.log("tab clicked")} />
+      <Chip
+        label="dummy tab focus 1"
+        onClick={() => console.log("tab clicked")}
+      />
       <div
         className="App"
         onBlur={(event) => {
@@ -141,18 +137,10 @@ export default function App() {
             }}
             open={open}
             disablePortal
-            // onChange={(event, value) => setValue(value)}
             onBlur={() => setIsBlurred(true)}
             onFocus={() => setIsBlurred(false)}
-            // sx={{
-            //   minWidth: isBlurred ? 0 : "auto",
-            //   transition: "min-width 0.2s", // smooth transition
-            // }}
             options={schools}
             renderInput={(params) => {
-              console.log(params); // Logs the params object
-              console.log(params.value); // Logs the params object
-
               return (
                 <TextField
                   {...params}
@@ -187,7 +175,6 @@ export default function App() {
                     tabIndex={-1}
                     checkedIcon={checkedIcon}
                     style={{ marginRight: 8 }}
-                    // checked={selected} <<<--- OLD
                     checked={
                       option.all
                         ? !!(value.length === schools.length)
@@ -206,12 +193,12 @@ export default function App() {
             )}
             ListboxProps={{ sx: { maxHeight: 300 } }}
             PaperComponent={CustomPaper}
-            componentsProps={{ paper: { buttons: buttons } }}
+            slotProps={{ paper: { buttons: buttons } }}
           />
         </Paper>
       </div>
       <Chip
-        label="tab to me 2"
+        label="dummy tab focus 2"
         onClick={() => console.log("tab clicked")}
         ref={buttonRef}
       />
