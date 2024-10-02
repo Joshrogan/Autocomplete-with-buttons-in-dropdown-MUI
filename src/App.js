@@ -84,6 +84,7 @@ export default function App() {
         }}
         onClick={() => {
           setValue([]);
+          setInputValue("");
           console.log("Clear Selection Clicked");
         }}
       />
