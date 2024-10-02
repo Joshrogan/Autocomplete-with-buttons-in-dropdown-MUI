@@ -9,6 +9,7 @@
     "@emotion/styled": "latest",
     "@material-ui/styles": "latest",
     "@material-ui/utils": "latest",
+    "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "react": "latest",
     "react-dom": "latest",
