@@ -175,6 +175,7 @@ export default function App() {
               <li {...props} key={option.key}>
                 <Checkbox
                   icon={icon}
+                  tabIndex={-1}
                   checkedIcon={checkedIcon}
                   style={{ marginRight: 8 }}
                   // checked={selected} <<<--- OLD
