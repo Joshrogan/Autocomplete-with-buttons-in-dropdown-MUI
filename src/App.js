@@ -182,6 +182,9 @@ export default function App() {
             }}
             renderTags={(value, getTagProps) => {
               const numTags = value.length;
+              if ((!open && !isBlurred) || (open && !isBlurred)) {
+                return null;
+              }
               return (
                 <Typography variant="body2" style={{ width: "100%" }}>
                   {`${numTags} Schools Selected`}
